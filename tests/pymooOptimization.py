@@ -9,7 +9,7 @@ from pymoo.problems.static import StaticProblem
 problem = Problem(n_var=30, n_obj=2, n_constr=0, xl=np.zeros(30), xu=np.ones(30))
 
 # create the algorithm object
-algorithm = NSGA2(pop_size=100)
+algorithm = NSGA2(pop_size=1)
 
 # let the algorithm object never terminate and let the loop control it
 termination = NoTermination()
@@ -41,7 +41,7 @@ for n_gen in range(10):
     algorithm.tell(infills=pop)
 
     # do same more things, printing, logging, storing or even modifying the algorithm object
-    print(algorithm.n_gen)
+    print(str(algorithm.n_gen) + ' ' + str(X[0]) + " " + str(F[0]))
 
 # obtain the result objective from the algorithm
 res = algorithm.result()

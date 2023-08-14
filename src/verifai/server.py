@@ -101,6 +101,11 @@ def choose_sampler(sample_space, sampler_type,
             sample_space, sampler_params)
         return 'glis', sampler
 
+    if sampler_type == 'pymoo':
+        sampler = FeatureSampler.pymooSamplerFor(
+            sample_space, sampler_params)
+        return 'pymoo', sampler
+
     raise ValueError(f'unknown sampler type "{sampler_type}"')
 
 class Server:

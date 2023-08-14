@@ -166,6 +166,22 @@ class FeatureSampler:
 
         return LateFeatureSampler(space, RandomSampler, makeDomainSampler)
 
+    def pymooSamplerFor(space, params):
+        """Creates a Pymoo Optimization sampler for a given space.
+        Uses random sampling for lengths of feature lists and any
+        Domains that are not continous and standardizable.
+        """
+
+        def makeDomainSampler(domain):
+            return SplitSampler.fromPredicate(
+                domain,
+                lambda d: d.standardizedDimension > 0,
+                lambda domain: PymooSampler(domain=domain,
+                                           params=params),
+                makeRandomSampler)
+
+        return LateFeatureSampler(space, RandomSampler, makeDomainSampler)
+
     def getSample(self):
         """Generate a sample, along with any sampler-specific info.
 
