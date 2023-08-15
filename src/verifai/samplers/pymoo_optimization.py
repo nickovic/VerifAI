@@ -4,7 +4,7 @@ For discrete inputs define another sampler"""
 from glis.solvers import GLIS
 from pymoo.algorithms.moo.nsga2 import NSGA2
 from pymoo.core.evaluator import Evaluator
-from pymoo.core.problem import Problem
+from pymoo.core.problem import Problem, ElementwiseEvaluationFunction, LoopedElementwiseEvaluation
 from pymoo.core.termination import NoTermination
 from pymoo.problems.static import StaticProblem
 from verifai.samplers.domain_sampler import BoxSampler

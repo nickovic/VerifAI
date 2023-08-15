@@ -1,4 +1,9 @@
 from glis.solvers import GLIS
+from pymoo.core.problem import Problem
+from pymoo.core.termination import NoTermination
+from pymoo.algorithms.moo.nsga2 import NSGA2
+from pymoo.problems.static import StaticProblem
+from pymoo.core.evaluator import Evaluator
 from verifai.features import *
 from verifai.samplers import *
 from dotmap import DotMap
@@ -8,7 +13,7 @@ import pytest
 from tests.utils import sampleWithFeedback, checkSaveRestore
 
 
-def test_glisOptimization():
+def test_pymooOptimization():
     carDomain = Struct({
         'position': Box([-10,10], [-10,10], [0,1]),
         'heading': Box([0, math.pi]),
@@ -24,7 +29,7 @@ def test_glisOptimization():
 
     params = DotMap()
     params.n_initial_random=10
-    sampler = FeatureSampler.glisSamplerFor(space, params)
+    sampler = FeatureSampler.pymooSamplerFor(space, params)
 
     sampleWithFeedback(sampler, 10, f)
 
@@ -35,36 +40,43 @@ def test_save_restore(tmpdir):
     })
     params = DotMap()
     params.n_initial_random=3
-    sampler = FeatureSampler.glisSamplerFor(space, params)
+    sampler = FeatureSampler.pymooSamplerFor(space, params)
 
     checkSaveRestore(sampler, tmpdir)
+
+
+
 
 def test_direct_vs_verifai():
     fun = lambda x: ((4.0 - 2.1 * x[0] ** 2 + x[0] ** 4 / 3.0) *
                      x[0] ** 2 + x[0] * x[1] + (4.0 * x[1] ** 2 - 4.0) * x[1] ** 2)
 
-    p = {'display': 0, 'n_initial_random': 3}
 
-    # Direct GLIS approach
+    # Direct Pymoo approach
     rdm.seed(0)
     random.seed(0)
 
     lb = np.array([-2.0, -1.0])
     ub = np.array([2.0, 1.0])
 
-    prob = GLIS(bounds=(lb, ub), **p)
+    p = {'n_var': 2, 'xl': lb, 'xu': ub}
+    problem = Problem(p)
+    termination = NoTermination()
+    algorithm = NSGA2(pop_size=1)
+    algorithm.setup(problem, termination=termination)
+
 
     X = []
     F = []
     for i in range(6):
-        if i == 0:
-            x = prob.initialize()
-            X.append(x.tolist())
-        else:
-            f = fun(x)
-            x = prob.update(f)
-            X.append(x.tolist())
-            F.append(f)
+        pop = algorithm.ask()
+        x = pop.get("X")
+        f = fun(x)
+        X.append(x)
+        F.append(f)
+        static = StaticProblem(problem, F=[f])
+        Evaluator().eval(static, pop)
+        algorithm.tell(infills=pop)
 
     # VerifAI approach
     rdm.seed(0)
@@ -74,7 +86,7 @@ def test_direct_vs_verifai():
         'b': Feature(Box([-1.0, 1.0]))
     })
 
-    sampler = FeatureSampler.glisSamplerFor(space, p)
+    sampler = FeatureSampler.pymooSamplerFor(space, p)
 
     X_prime = []
     F_prime = []
