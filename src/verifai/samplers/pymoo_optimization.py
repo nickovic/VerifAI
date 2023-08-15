@@ -81,7 +81,7 @@ class PymooSampler(BoxSampler):
             self.pop = self.algorithm.ask()
             x = self.pop.get("X")
 
-        return tuple(x), None
+        return tuple(x[0]), None
 
     def updateVector(self, vector, info, rho):
         self.rho = rho

@@ -45,10 +45,8 @@ def test_save_restore(tmpdir):
     checkSaveRestore(sampler, tmpdir)
 
 
-
-
 def test_direct_vs_verifai():
-    fun = lambda x: ((4.0 - 2.1 * x[0] ** 2 + x[0] ** 4 / 3.0) *
+    def fun(x): return ((4.0 - 2.1 * x[0] ** 2 + x[0] ** 4 / 3.0) *
                      x[0] ** 2 + x[0] * x[1] + (4.0 * x[1] ** 2 - 4.0) * x[1] ** 2)
 
 
@@ -60,19 +58,18 @@ def test_direct_vs_verifai():
     ub = np.array([2.0, 1.0])
 
     p = {'n_var': 2, 'xl': lb, 'xu': ub}
-    problem = Problem(p)
+    problem = Problem(**p)
     termination = NoTermination()
     algorithm = NSGA2(pop_size=1)
     algorithm.setup(problem, termination=termination)
-
 
     X = []
     F = []
     for i in range(6):
         pop = algorithm.ask()
         x = pop.get("X")
-        f = fun(x)
-        X.append(x)
+        f = fun(x[0])
+        X.append(x[0].tolist())
         F.append(f)
         static = StaticProblem(problem, F=[f])
         Evaluator().eval(static, pop)
