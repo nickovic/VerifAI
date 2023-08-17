@@ -1,3 +1,4 @@
+import os
 from pymoo.core.problem import Problem
 from pymoo.core.termination import NoTermination
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -71,9 +72,29 @@ def test_save_restore(tmpdir):
         'b': Feature(Box((0, 1)), lengthDomain=DiscreteBox((1, 2)))
     })
     params = DotMap()
+    params.n_var = 2
+    params.n_obj = 1
     sampler = FeatureSampler.pymooSamplerFor(space, params)
 
-    checkSaveRestore(sampler, tmpdir)
+    path = os.path.join(tmpdir, 'blah.dat')
+    feedback = None
+    for i in range(10):
+        sampler.saveToFile(path)
+        sample1 = sampler.nextSample(feedback)
+        sample2 = sampler.nextSample(-1.1)
+        sampler = FeatureSampler.restoreFromFile(path)
+        sample1b = sampler.nextSample(feedback)
+        sample2b = sampler.nextSample(-1.1)
+        assert sample1 != sample2
+        assert sample1 == sample1b
+        assert sample2 == sample2b
+        sampler.saveToFile(path)
+        sample3 = sampler.nextSample(1.1)
+        sampler = FeatureSampler.restoreFromFile(path)
+        sample3b = sampler.nextSample(1.1)
+        assert sample3 not in (sample1, sample2)
+        assert sample3 == sample3b
+        feedback = 1.1
 
 
 def test_direct_vs_verifai():
