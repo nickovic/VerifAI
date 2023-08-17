@@ -32,6 +32,39 @@ def test_pymooOptimization():
 
     sampleWithFeedback(sampler, 10, f)
 
+def test_pymooOptimization_mo():
+    carDomain = Struct({
+        'position': Box([-10,10], [-10,10], [0,1]),
+        'heading': Box([0, math.pi]),
+    })
+
+    space = FeatureSpace({
+        'cars': Feature(Array(carDomain, [2]))
+    })
+
+    def f(sample):
+        sample = sample.cars[0].heading[0]
+        return abs(sample - 0.75)
+
+    def g(sample):
+        sample = sample.cars[0].heading[0]
+        return abs(sample - 0.8)
+
+    params = DotMap()
+    params.n_var = 8
+    params.n_obj = 2
+    sampler = FeatureSampler.pymooSamplerFor(space, params)
+
+    feedback = None
+    samples = []
+    for i in range(10):
+        sample = sampler.nextSample(feedback)
+        feedback = [f(sample), g(sample)]
+        print(f'Sample #{i}:')
+        print(sample)
+        samples.append(sample)
+
+
 def test_save_restore(tmpdir):
     space = FeatureSpace({
         'a': Feature(DiscreteBox([0, 12])),
