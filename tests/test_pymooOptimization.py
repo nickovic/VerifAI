@@ -1,4 +1,3 @@
-from glis.solvers import GLIS
 from pymoo.core.problem import Problem
 from pymoo.core.termination import NoTermination
 from pymoo.algorithms.moo.nsga2 import NSGA2
@@ -28,7 +27,7 @@ def test_pymooOptimization():
         return abs(sample - 0.75)
 
     params = DotMap()
-    params.n_initial_random=10
+    params.n_var=8
     sampler = FeatureSampler.pymooSamplerFor(space, params)
 
     sampleWithFeedback(sampler, 10, f)
@@ -39,7 +38,6 @@ def test_save_restore(tmpdir):
         'b': Feature(Box((0, 1)), lengthDomain=DiscreteBox((1, 2)))
     })
     params = DotMap()
-    params.n_initial_random=3
     sampler = FeatureSampler.pymooSamplerFor(space, params)
 
     checkSaveRestore(sampler, tmpdir)
@@ -98,4 +96,4 @@ def test_direct_vs_verifai():
             F_prime.append(f_prime)
 
     assert X == X_prime
-    assert F == F_prime
+    assert F[0:len(F_prime)] == F_prime

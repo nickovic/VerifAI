@@ -62,6 +62,11 @@ class PymooSampler(BoxSampler):
         self.rho = None
         self.pop = None
 
+        dim = domain.flattenedDimension
+        params["n_var"] = dim
+        params["xl"] = zeros(dim)
+        params["xu"] = ones(dim)
+
         self.problem = Problem(**params)
 
         if 'algorithm' not in params:
@@ -79,7 +84,8 @@ class PymooSampler(BoxSampler):
 
         if self.rho != int(1):
             self.pop = self.algorithm.ask()
-            x = self.pop.get("X")
+
+        x = self.pop.get("X")
 
         return tuple(x[0]), None
 
