@@ -10,39 +10,6 @@ from pymoo.problems.static import StaticProblem
 from verifai.samplers.domain_sampler import BoxSampler
 
 
-class VerifaiProblem(Problem):
-    def __init__(self,
-                 n_var=-1,
-                 n_obj=1,
-                 n_ieq_constr=0,
-                 n_eq_constr=0,
-                 xl=None,
-                 xu=None,
-                 vtype=None,
-                 vars=None,
-                 elementwise=False,
-                 elementwise_func=ElementwiseEvaluationFunction,
-                 elementwise_runner=LoopedElementwiseEvaluation(),
-                 replace_nan_values_by=None,
-                 exclude_from_serialization=None,
-                 callback=None,
-                 strict=True,
-                 **kwargs):
-        self.out = None
-        super().__init__(n_var, n_obj, n_ieq_constr, n_eq_constr, xl, xu, vtype, vars, elementwise,
-                         elementwise_func, elementwise_runner, replace_nan_values_by, exclude_from_serialization,
-                         callback, strict, **kwargs)
-
-    def _evaluate(self, x, out, *args, **kwargs):
-        if 'result' not in kwargs:
-            raise Exception('Pymoo Sampler: the output of simulation evaluation '
-                            'must be passed as result argument')
-        out["F"] = kwargs['result']
-
-    def update(self, out):
-        self.out = out
-
-
 class PymooSampler(BoxSampler):
     '''
     Integrates the Pymoo sampler with VerifAI
@@ -67,6 +34,7 @@ class PymooSampler(BoxSampler):
         params["xl"] = zeros(dim)
         params["xu"] = ones(dim)
 
+
         self.problem = Problem(**params)
 
         if 'algorithm' not in params:
@@ -78,7 +46,9 @@ class PymooSampler(BoxSampler):
 
     def getVector(self):
         if self.rho is not None:
-            static = StaticProblem(self.problem, F=[self.rho])
+            if isinstance(self.rho, float):
+                self.rho = [self.rho]
+            static = StaticProblem(self.problem, F=self.rho)
             Evaluator().eval(static, self.pop)
             self.algorithm.tell(infills=self.pop)
 
