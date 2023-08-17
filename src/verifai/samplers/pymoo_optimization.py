@@ -60,4 +60,21 @@ class PymooSampler(BoxSampler):
         return tuple(x[0]), None
 
     def updateVector(self, vector, info, rho):
+        # we do some sanity checks on rho
+        # rho can be:
+        # - None (not initialized yet)
+        # - int(1) (sample rejected, hence rho not computed)
+        # - float (number of objectives must be one)
+        # - list of floats (the length of the list corresponds to the number of objectives
+
+        if rho is not None or rho != int(1):
+            is_float = isinstance(rho, float)
+            is_list = isinstance(rho, list)
+            assert(is_float or is_list)
+            if is_float:
+                assert self.problem.n_obj == 1
+            elif is_list:
+                assert(all(isinstance(x, float) for x in rho))
+                assert(len(rho) == self.problem.n_obj)
+
         self.rho = rho
