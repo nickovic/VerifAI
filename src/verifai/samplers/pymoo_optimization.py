@@ -64,12 +64,12 @@ class PymooSampler(BoxSampler):
                 assert (all(isinstance(x, float) for x in self.rho))
                 assert (len(self.rho) == self.problem.n_obj)
 
-        if self.rho is not None:
-            static = StaticProblem(self.problem, F=self.rho)
-            Evaluator().eval(static, self.pop)
-            self.algorithm.tell(infills=self.pop)
+            if not isinstance(self.rho, int):
+                static = StaticProblem(self.problem, F=self.rho)
+                Evaluator().eval(static, self.pop)
+                self.algorithm.tell(infills=self.pop)
 
-        if self.rho != int(1):
+        if not isinstance(self.rho, int):
             self.pop = self.algorithm.ask()
 
         x = self.pop.get("X")
