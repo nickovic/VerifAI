@@ -106,6 +106,11 @@ def choose_sampler(sample_space, sampler_type,
             sample_space, sampler_params)
         return 'pymoo', sampler
 
+    if sampler_type == 'repeat':
+        sampler = FeatureSampler.repeatSamplerFor(
+            sample_space, sampler_params)
+        return 'repeat', sampler
+
     raise ValueError(f'unknown sampler type "{sampler_type}"')
 
 class Server:
