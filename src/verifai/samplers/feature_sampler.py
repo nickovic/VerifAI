@@ -22,6 +22,7 @@ from verifai.samplers.simulated_annealing import SimulatedAnnealingSampler
 from verifai.samplers.grid_sampler import GridSampler
 from verifai.samplers.glis_optimization import GLISSampler
 from verifai.samplers.pymoo_optimization import PymooSampler
+from verifai.samplers.repeat_optimization import RepeatSampler
 
 
 ### Samplers defined over FeatureSpaces
