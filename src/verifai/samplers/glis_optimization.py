@@ -24,7 +24,10 @@ class GLISSampler(BoxSampler):
         dim = domain.flattenedDimension
         self.lb = zeros(dim)
         self.ub = ones(dim)
-        self.sampler = GLIS(bounds=(self.lb, self.ub), **params)
+        if params is None:
+            self.sampler = GLIS(bounds=(self.lb, self.ub))
+        else:
+            self.sampler = GLIS(bounds=(self.lb, self.ub), **params)
 
 
     def getVector(self):
