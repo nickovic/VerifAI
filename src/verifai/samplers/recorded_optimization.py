@@ -7,8 +7,8 @@ class RecordedSampler(BoxSampler):
     def __init__(self, domain, params):
         super().__init__(domain)
 
-        self.lb = [domain.domains[idx].intervals[0][0] for idx in domain.flattenedDimension]
-        self.ub = [domain.domains[idx].intervals[0][0] for idx in domain.flattenedDimension]
+        self.lb = [domain.domains[idx].intervals[0][0] for idx in range(domain.flattenedDimension)]
+        self.ub = [domain.domains[idx].intervals[0][0] for idx in range(domain.flattenedDimension)]
 
         self.rho = None
 
