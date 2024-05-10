@@ -9,10 +9,13 @@ class RecordedSampler(BoxSampler):
 
         self.rho = None
 
-        filename = params['filename']
-        self.df = pd.read_csv(filename)
         self.row = 0
+        self.x = None
 
+        #self.x = self.df.iloc[self.row]
+
+    def setFilename(self, filename):
+        self.df = pd.read_csv(filename)
         self.x = self.df.iloc[self.row]
 
     def getVector(self):
