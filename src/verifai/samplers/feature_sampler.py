@@ -25,7 +25,6 @@ from verifai.samplers.pymoo_optimization import PymooSampler
 from verifai.samplers.repeat_optimization import RepeatSampler
 from verifai.samplers.recorded_optimization import RecordedSampler
 
-from src.verifai.samplers.recorded_optimization import RecordedSampler
 
 
 ### Samplers defined over FeatureSpaces
