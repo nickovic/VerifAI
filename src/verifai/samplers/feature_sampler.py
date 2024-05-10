@@ -23,6 +23,9 @@ from verifai.samplers.grid_sampler import GridSampler
 from verifai.samplers.glis_optimization import GLISSampler
 from verifai.samplers.pymoo_optimization import PymooSampler
 from verifai.samplers.repeat_optimization import RepeatSampler
+from verifai.samplers.recorded_optimization import RecordedOptimization
+
+from src.verifai.samplers.recorded_optimization import RecordedSampler
 
 
 ### Samplers defined over FeatureSpaces
@@ -169,6 +172,21 @@ class FeatureSampler:
 
         return LateFeatureSampler(space, RandomSampler, makeDomainSampler)
 
+    def recordedSamplerFor(space, params):
+        """Creates a Recorded Optimization sampler for a given space.
+        Uses random sampling for lengths of feature lists and any
+        Domains that are not continous and standardizable.
+        """
+
+        def makeDomainSampler(domain):
+            return SplitSampler.fromPredicate(
+                domain,
+                lambda d: d.standardizedDimension > 0,
+                lambda domain: RecordedSampler(domain=domain,
+                                           params=params),
+                makeRandomSampler)
+
+        return LateFeatureSampler(space, RandomSampler, makeDomainSampler)
     def pymooSamplerFor(space, params):
         """Creates a Pymoo Optimization sampler for a given space.
         Uses random sampling for lengths of feature lists and any

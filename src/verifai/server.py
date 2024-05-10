@@ -111,6 +111,11 @@ def choose_sampler(sample_space, sampler_type,
             sample_space, sampler_params)
         return 'repeat', sampler
 
+    if sampler_type == 'recorded':
+        sampler = FeatureSampler.pymooSamplerFor(
+            sample_space, sampler_params)
+        return 'recorded', sampler
+
     raise ValueError(f'unknown sampler type "{sampler_type}"')
 
 class Server:
