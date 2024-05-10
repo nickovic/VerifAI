@@ -8,7 +8,7 @@ class RecordedSampler(BoxSampler):
         super().__init__(domain)
 
         self.lb = [domain.domains[idx].intervals[0][0] for idx in range(domain.flattenedDimension)]
-        self.ub = [domain.domains[idx].intervals[0][0] for idx in range(domain.flattenedDimension)]
+        self.ub = [domain.domains[idx].intervals[0][1] for idx in range(domain.flattenedDimension)]
 
         self.rho = None
 
@@ -19,7 +19,7 @@ class RecordedSampler(BoxSampler):
         self.df = pd.read_csv(filename)
         x = np.array(list(self.df.iloc[self.row]))
         lb = np.array(self.lb)
-        ub = np.array(self.lb)
+        ub = np.array(self.ub)
         x = (x - lb)/(ub - lb)
         self.x = tuple(list(x))
         self.row = self.row + 1
@@ -28,7 +28,7 @@ class RecordedSampler(BoxSampler):
         if self.row < len(self.df.index):
             x = np.array(list(self.df.iloc[self.row]))
             lb = np.array(self.lb)
-            ub = np.array(self.lb)
+            ub = np.array(self.ub)
             x = (x - lb) / (ub - lb)
             self.x = tuple(list(x))
             self.row = self.row + 1
