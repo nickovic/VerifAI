@@ -25,14 +25,15 @@ class RecordedSampler(BoxSampler):
         self.row = self.row + 1
 
     def getVector(self):
-        if self.row < len(self.df.index):
+        out = self.x
+        if self.rho != int(1) and self.row < len(self.df.index):
             x = np.array(list(self.df.iloc[self.row]))
             lb = np.array(self.lb)
             ub = np.array(self.ub)
             x = (x - lb) / (ub - lb)
             self.x = tuple(list(x))
             self.row = self.row + 1
-        return self.x, None
+        return out, None
 
     def updateVector(self, vector, info, rho):
         self.rho = rho
