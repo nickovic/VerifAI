@@ -112,7 +112,7 @@ def choose_sampler(sample_space, sampler_type,
         return 'repeat', sampler
 
     if sampler_type == 'recorded':
-        sampler = FeatureSampler.pymooSamplerFor(
+        sampler = FeatureSampler.recordedSamplerFor(
             sample_space, sampler_params)
         return 'recorded', sampler
 
